@@ -73,4 +73,40 @@ public class BufferedReaderTest {
             assertThat(line.trim()).isEmpty();
         }
     }
+
+    // EOF (End Of File) 처리
+    @Nested
+    class EOF_처리 {
+
+        @Test
+        void 더_이상_읽을_줄이_없으면_null을_반환한다() throws IOException {
+            BufferedReader br = createReader("only one line");
+
+            assertThat(br.readLine()).isEqualTo("only one line");
+            assertThat(br.readLine()).isNull(); // EOF!
+            assertThat(br.readLine()).isNull(); // 계속 null
+        }
+
+        @Test
+        void EOF까지_모든_줄_읽기_패턴() throws IOException {
+            BufferedReader br = createReader("1\n2\n3");
+
+            StringBuilder result = new StringBuilder();
+            String line;
+
+            // PS에서 입력 개수가 안 주어질 때 사용하는 패턴
+            while ((line = br.readLine()) != null) {
+                result.append(line).append(",");
+            }
+
+            assertThat(result.toString()).isEqualTo("1,2,3,");
+        }
+
+        @Test
+        void 빈_입력은_즉시_null을_반환한다() throws IOException {
+            BufferedReader br = createReader("");
+
+            assertThat(br.readLine()).isNull();
+        }
+    }
 }
