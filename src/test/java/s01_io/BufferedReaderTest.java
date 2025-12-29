@@ -138,4 +138,55 @@ public class BufferedReaderTest {
             assertThat(br.readLine()).isEqualTo("b");
         }
     }
+
+    @Nested
+    class PS_실전_패턴 {
+
+        @Test
+        void 첫_줄에_개수_그_다음부터_데이터_패턴() throws IOException {
+            String input = "3\n10\n20\n30";
+            BufferedReader br = createReader(input);
+
+            int n = Integer.parseInt(br.readLine());
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++) {
+                arr[i] = Integer.parseInt(br.readLine());
+            }
+
+            assertThat(n).isEqualTo(3);
+            assertThat(arr).containsExactly(10, 20, 30);
+        }
+
+        @Test
+        void 한_줄에_여러_숫자는_StringTokenizer와_함께() throws IOException {
+            String input = "5\n1 2 3 4 5";
+            BufferedReader br = createReader(input);
+
+            int n = Integer.parseInt(br.readLine());
+            String[] parts = br.readLine().split(" ");
+
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = Integer.parseInt(parts[i]);
+            }
+
+            assertThat(arr).containsExactly(1, 2, 3, 4, 5);
+        }
+
+        @Test
+        void 테스트케이스_개수만큼_반복_패턴() throws IOException {
+            String input = "2\ncase1\ncase2";
+            BufferedReader br = createReader(input);
+
+            int T = Integer.parseInt(br.readLine());
+            String[] results = new String[T];
+
+            for (int t = 0; t < T; t++) {
+                results[t] = br.readLine();
+            }
+
+            assertThat(results).containsExactly("case1", "case2");
+        }
+    }
 }
