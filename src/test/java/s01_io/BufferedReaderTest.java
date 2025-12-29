@@ -1,6 +1,7 @@
 package s01_io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -187,6 +188,41 @@ public class BufferedReaderTest {
             }
 
             assertThat(results).containsExactly("case1", "case2");
+        }
+    }
+
+    @Nested
+    class 주의사항_함정 {
+
+        @Test
+        void readLine_후_parseInt시_공백이_있으면_예외() {
+            // readLine()은 앞뒤 공백을 제거하지 않는다
+            String lineWithSpaces = " 123 ";
+
+            assertThatThrownBy(() -> Integer.parseInt(lineWithSpaces)).isInstanceOf(NumberFormatException.class);
+        }
+
+        @Test
+        void readLine_후_parseInt시_trim으로_해결() {
+            String lineWithSpaces = " 123 ";
+
+            int number = Integer.parseInt(lineWithSpaces.trim());
+
+            assertThat(number).isEqualTo(123);
+        }
+
+        @Test
+        void nextInt_후_nextLine_문제는_BufferedReader에는_없다() throws IOException {
+            // Scanner에서 악명 높은 문제: nextInt() 후 nextLine()이 빈 줄을 읽음
+            // BufferedReader는 항상 한 줄씩 읽으므로 이 문제가 없다
+            String input = "123\nhello";
+            BufferedReader br = createReader(input);
+
+            int number = Integer.parseInt(br.readLine());
+            String text = br.readLine();
+
+            assertThat(number).isEqualTo(123);
+            assertThat(text).isEqualTo("hello"); // 정상 동작
         }
     }
 }
