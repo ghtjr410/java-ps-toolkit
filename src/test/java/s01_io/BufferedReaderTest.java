@@ -225,4 +225,41 @@ public class BufferedReaderTest {
             assertThat(text).isEqualTo("hello"); // 정상 동작
         }
     }
+
+    // read() vs readLine()
+    @Nested
+    class read_메서드 {
+        // read(): 한 문자씩 읽기 (거의 안 씀)
+        // - PS에서는 99% readLine() 사용
+        // - read()는 EOF를 -1로 표현하기 위해 int 반환
+
+        @Test
+        void read는_한_문자씩_읽고_int로_반환한다() throws IOException {
+            BufferedReader br = createReader("AB");
+
+            int firstChar = br.read();
+            int secondChar = br.read();
+
+            assertThat(firstChar).isEqualTo('A'); // int지만 char로 비교 가능
+            assertThat(secondChar).isEqualTo('B');
+            assertThat((char) firstChar).isEqualTo('A');
+        }
+
+        @Test
+        void read가_EOF면_마이너스1을_반환한다() throws IOException {
+            BufferedReader br = createReader("A");
+
+            assertThat(br.read()).isEqualTo('A');
+            assertThat(br.read()).isEqualTo(-1); // EOF
+        }
+
+        @Test
+        void read는_개행문자도_읽는다() throws IOException {
+            BufferedReader br = createReader("A\nB");
+
+            assertThat((char) br.read()).isEqualTo('A');
+            assertThat((char) br.read()).isEqualTo('\n'); // 개행도 읽힘
+            assertThat((char) br.read()).isEqualTo('B');
+        }
+    }
 }
