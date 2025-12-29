@@ -119,4 +119,45 @@ public class StringTokenizerTest {
             assertThat(st.nextToken()).isEqualTo("b");
         }
     }
+
+    // ⭐⭐⭐ 연속 구분자 처리 - 핵심
+    @Nested
+    class 연속_구분자_처리_핵심 {
+        // StringTokenizer는 빈 토큰을 절대 만들지 않는다.
+
+        @Test
+        void StringTokenizer는_연속_구분자를_무시한다() {
+            // 공백이 여러 개여도 빈 토큰이 생기지 않는다
+            StringTokenizer st = new StringTokenizer("a  b   c");
+
+            assertThat(st.countTokens()).isEqualTo(3); // 빈 토큰 없음
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("b");
+            assertThat(st.nextToken()).isEqualTo("c");
+        }
+
+        @Test
+        void 앞뒤_공백도_무시한다() {
+            StringTokenizer st = new StringTokenizer("  hello  ");
+
+            assertThat(st.countTokens()).isEqualTo(1);
+            assertThat(st.nextToken()).isEqualTo("hello");
+        }
+
+        @Test
+        void 공백만_있으면_토큰이_없다() {
+            StringTokenizer st = new StringTokenizer("   ");
+
+            assertThat(st.countTokens()).isEqualTo(0);
+            assertThat(st.hasMoreTokens()).isFalse();
+        }
+
+        @Test
+        void 빈_문자열이면_토큰이_없다() {
+            StringTokenizer st = new StringTokenizer("");
+
+            assertThat(st.countTokens()).isEqualTo(0);
+            assertThat(st.hasMoreTokens()).isFalse();
+        }
+    }
 }
