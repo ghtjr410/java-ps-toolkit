@@ -81,4 +81,42 @@ public class StringTokenizerTest {
             assertThat(first).isEqualTo("first"); // 정상적으로 첫 번째
         }
     }
+
+    // 기본 구분자 (공백, 탭, 개행, 캐리지리턴, 폼피드)
+    @Nested
+    class 기본_구분자 {
+
+        @Test
+        void 기본_구분자는_공백이다() {
+            StringTokenizer st = new StringTokenizer("a b c");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+        }
+
+        @Test
+        void 탭도_기본_구분자이다() {
+            StringTokenizer st = new StringTokenizer("a\tb\tc");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("b");
+            assertThat(st.nextToken()).isEqualTo("c");
+        }
+
+        @Test
+        void 개행도_기본_구분자이다() {
+            StringTokenizer st = new StringTokenizer("a\nb\nc");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+        }
+
+        @Test
+        void 공백_탭_개행_혼합도_처리한다() {
+            StringTokenizer st = new StringTokenizer("a \t\n b");
+
+            assertThat(st.countTokens()).isEqualTo(2);
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("b");
+        }
+    }
 }
