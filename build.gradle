@@ -8,7 +8,9 @@ version = '1.0-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        // Java 11 목표였으나, Nested 클래스 한글명 인코딩 이슈로 21 사용
+        // (다만 Java11 기준으로 작성예정)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
