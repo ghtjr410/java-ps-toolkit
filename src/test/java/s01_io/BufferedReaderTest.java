@@ -109,4 +109,33 @@ public class BufferedReaderTest {
             assertThat(br.readLine()).isNull();
         }
     }
+
+    // 개행 문자 종류 (Windows vs Unix)
+    @Nested
+    class 개행_문자_처리 {
+
+        @Test
+        void Unix_개행문자_LF를_처리한다() throws IOException {
+            BufferedReader br = createReader("a\nb"); // \n = LF
+
+            assertThat(br.readLine()).isEqualTo("a");
+            assertThat(br.readLine()).isEqualTo("b");
+        }
+
+        @Test
+        void Windows_개행문자_CRLF를_처리한다() throws IOException {
+            BufferedReader br = createReader("a\r\nb"); // \r\n = CRLF
+
+            assertThat(br.readLine()).isEqualTo("a");
+            assertThat(br.readLine()).isEqualTo("b");
+        }
+
+        @Test
+        void 구형_Mac_개행문자_CR만_있어도_처리한다() throws IOException {
+            BufferedReader br = createReader("a\rb"); // \r = CR
+
+            assertThat(br.readLine()).isEqualTo("a");
+            assertThat(br.readLine()).isEqualTo("b");
+        }
+    }
 }
