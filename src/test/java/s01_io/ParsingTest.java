@@ -247,4 +247,47 @@ public class ParsingTest {
             assertThat(c == d).isFalse(); // 다른 객체
         }
     }
+
+    // Double.parseDouble
+    @Nested
+    class parseDouble {
+
+        @Test
+        void 실수를_파싱한다() {
+            double result = Double.parseDouble("3.14");
+
+            assertThat(result).isEqualTo(3.14);
+        }
+
+        @Test
+        void 정수_문자열도_실수로_파싱_가능() {
+            double result = Double.parseDouble("123");
+
+            assertThat(result).isEqualTo(123.0);
+        }
+
+        @Test
+        void 지수_표기법도_파싱() {
+            double result = Double.parseDouble("1.5e2");
+
+            assertThat(result).isEqualTo(150.0);
+        }
+
+        // Java의 유명한 API 비일관성 중 하나
+        // Double.parseDouble()은 앞뒤 공백을 허용
+        @Test
+        void parseDouble은_앞쪽_공백을_허용한다() {
+            assertThat(Double.parseDouble(" 3.14")).isEqualTo(3.14);
+        }
+
+        @Test
+        void parseDouble은_뒤쪽_공백을_허용한다() {
+            assertThat(Double.parseDouble("3.14 ")).isEqualTo(3.14);
+        }
+
+        @Test
+        void parseDouble은_앞뒤_공백을_허용한다() {
+            assertThat(Double.parseDouble(" 3.14 ")).isEqualTo(3.14);
+        }
+    }
 }
