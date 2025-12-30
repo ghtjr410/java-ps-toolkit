@@ -1,6 +1,7 @@
 package s01_io;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -61,6 +62,53 @@ public class ParsingTest {
             int result = Integer.parseInt(s);
 
             assertThat(result).isEqualTo(123); // 8진수 83이 아님
+        }
+    }
+
+    // 공백 처리 - 핵심 함정
+    @Nested
+    class 공백_처리_핵심 {
+
+        @Test
+        void 앞에_공백이_있으면_예외() {
+            String s = " 123";
+
+            assertThatThrownBy(() -> Integer.parseInt(s)).isInstanceOf(NumberFormatException.class);
+        }
+
+        @Test
+        void 뒤에_공백이_있으면_예외() {
+            String s = "123 ";
+
+            assertThatThrownBy(() -> Integer.parseInt(s)).isInstanceOf(NumberFormatException.class);
+        }
+
+        @Test
+        void 중간에_공백이_있으면_예외() {
+            String s = "1 23";
+
+            assertThatThrownBy(() -> Integer.parseInt(s)).isInstanceOf(NumberFormatException.class);
+        }
+
+        @Test
+        void trim으로_앞뒤_공백을_제거하고_파싱() {
+            String s = "  123  ";
+
+            int result = Integer.parseInt(s.trim());
+
+            assertThat(result).isEqualTo(123);
+        }
+
+        @Test
+        void StringTokenizer_nextToken은_공백이_없으므로_안전() {
+            // StringTokenizer의 장점: nextToken()은 구분자 제외한 순수 토큰 반환
+            java.util.StringTokenizer st = new java.util.StringTokenizer("  123  456  ");
+
+            int a = Integer.parseInt(st.nextToken()); // trim 불필요!
+            int b = Integer.parseInt(st.nextToken());
+
+            assertThat(a).isEqualTo(123);
+            assertThat(b).isEqualTo(456);
         }
     }
 }
