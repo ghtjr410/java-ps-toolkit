@@ -111,4 +111,45 @@ public class ParsingTest {
             assertThat(b).isEqualTo(456);
         }
     }
+
+    // Long.parseLong()
+    @Nested
+    class parseLong {
+
+        @Test
+        void int_범위를_초과하는_수는_long으로_파싱() {
+            String s = "3000000000"; // 30억, int 범위(약 21억) 초과
+
+            assertThatThrownBy(() -> Integer.parseInt(s)).isInstanceOf(NumberFormatException.class);
+
+            long result = Long.parseLong(s);
+            assertThat(result).isEqualTo(3_000_000_000L);
+        }
+
+        @Test
+        void int_최대값은_약_21억() {
+            assertThat(Integer.MAX_VALUE).isEqualTo(2_147_483_647);
+
+            String maxInt = "2147483647";
+            assertThat(Integer.parseInt(maxInt)).isEqualTo(Integer.MAX_VALUE);
+
+            String overflow = "2147483648"; // MAX_VALUE + 1
+            assertThatThrownBy(() -> Integer.parseInt(overflow)).isInstanceOf(NumberFormatException.class);
+        }
+
+        @Test
+        void long_최대값은_약_922경() {
+            assertThat(Long.MAX_VALUE).isEqualTo(9_223_372_036_854_775_807L);
+        }
+
+        @Test
+        void PS에서_N이_10의12승_이상이면_long_필수() {
+            // 흔한 PS 제약: 1 ≤ N ≤ 10^12
+            String trillion = "1000000000000";
+
+            long result = Long.parseLong(trillion);
+
+            assertThat(result).isEqualTo(1_000_000_000_000L);
+        }
+    }
 }
