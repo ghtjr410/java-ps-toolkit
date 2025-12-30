@@ -152,4 +152,50 @@ public class ParsingTest {
             assertThat(result).isEqualTo(1_000_000_000_000L);
         }
     }
+
+    // 진법 변환 (radix)
+    @Nested
+    class 진법_변환 {
+
+        @Test
+        void _2진수를_10진수로_변환() {
+            String binary = "1010";
+
+            int result = Integer.parseInt(binary, 2);
+
+            assertThat(result).isEqualTo(10);
+        }
+
+        @Test
+        void _8진수를_10진수로_변환() {
+            String octal = "17";
+
+            int result = Integer.parseInt(octal, 8);
+
+            assertThat(result).isEqualTo(15); // 1*8 + 7 = 15
+        }
+
+        @Test
+        void _16진수를_10진수로_변환() {
+            String hex = "FF";
+
+            int result = Integer.parseInt(hex, 16);
+
+            assertThat(result).isEqualTo(255);
+        }
+
+        @Test
+        void _16진수는_대소문자_무관() {
+            assertThat(Integer.parseInt("ff", 16)).isEqualTo(255);
+            assertThat(Integer.parseInt("FF", 16)).isEqualTo(255);
+            assertThat(Integer.parseInt("Ff", 16)).isEqualTo(255);
+        }
+
+        @Test
+        void 유효하지_않은_진법_문자면_예외() {
+            String binary = "102"; // 2진수에 2가 있음
+
+            assertThatThrownBy(() -> Integer.parseInt(binary, 2)).isInstanceOf(NumberFormatException.class);
+        }
+    }
 }
