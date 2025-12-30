@@ -317,4 +317,87 @@ public class StringTokenizerTest {
             assertThat(st.nextToken()).isEqualTo("b");
         }
     }
+
+    // PS 실전 패턴
+    @Nested
+    class PS_실전_패턴 {
+
+        @Test
+        void 한_줄에_여러_정수_읽기() {
+            String line = "1 2 3 4 5";
+            StringTokenizer st = new StringTokenizer(line);
+
+            int[] arr = new int[st.countTokens()];
+            int idx = 0;
+
+            while (st.hasMoreTokens()) {
+                arr[idx++] = Integer.parseInt(st.nextToken());
+            }
+
+            assertThat(arr).containsExactly(1, 2, 3, 4, 5);
+        }
+
+        @Test
+        void 정해진_개수만큼_읽기() {
+            String line = "10 20 30";
+            StringTokenizer st = new StringTokenizer(line);
+
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            assertThat(a).isEqualTo(10);
+            assertThat(b).isEqualTo(20);
+            assertThat(c).isEqualTo(30);
+        }
+
+        @Test
+        void 좌표_입력_패턴() {
+            // BFS, DFS 문제에서 시작점/도착점
+            String line = "3 5"; // x y
+            StringTokenizer st = new StringTokenizer(line);
+
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
+
+            assertThat(x).isEqualTo(3);
+            assertThat(y).isEqualTo(5);
+        }
+
+        @Test
+        void 그래프_간선_입력_패턴() {
+            // 다익스트라, MST 등 가중치 그래프 문제
+            String line = "1 2 10"; // from to weight
+            StringTokenizer st = new StringTokenizer(line);
+
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+
+            assertThat(from).isEqualTo(1);
+            assertThat(to).isEqualTo(2);
+            assertThat(weight).isEqualTo(10);
+        }
+
+        @Test
+        void N과_M_입력_후_2차원_배열_읽기() {
+            // 미로, 게임판 등 격자 문제
+            String firstLine = "2 3"; // N M
+            String[] dataLines = {"1 2 3", "4 5 6"};
+
+            StringTokenizer st = new StringTokenizer(firstLine);
+            int N = Integer.parseInt(st.nextToken());
+            int M = Integer.parseInt(st.nextToken());
+
+            int[][] board = new int[N][M];
+            for (int i = 0; i < N; i++) {
+                st = new StringTokenizer(dataLines[i]);
+                for (int j = 0; j < M; j++) {
+                    board[i][j] = Integer.parseInt(st.nextToken());
+                }
+            }
+
+            assertThat(board).isDeepEqualTo(new int[][] {{1, 2, 3}, {4, 5, 6}});
+        }
+    }
 }
