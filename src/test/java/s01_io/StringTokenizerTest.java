@@ -400,4 +400,46 @@ public class StringTokenizerTest {
             assertThat(board).isDeepEqualTo(new int[][] {{1, 2, 3}, {4, 5, 6}});
         }
     }
+
+    // 주의사항 & 팁
+    @Nested
+    class 주의사항 {
+
+        @Test
+        void StringTokenizer는_스레드_안전하지_않다() {
+            // 단일 스레드 PS 환경에서는 문제없음
+            // 문서화 목적의 테스트
+            StringTokenizer st = new StringTokenizer("a b c");
+            assertThat(st.countTokens()).isEqualTo(3);
+        }
+
+        @Test
+        void StringTokenizer는_레거시_클래스지만_PS에서는_여전히_유용() {
+            // Java 공식 문서에서는 split() 권장
+            // 하지만 PS에서는 StringTokenizer가 더 편리한 경우 많음:
+            // 1. 연속 구분자 자동 처리
+            // 2. 빈 문자열 신경 안 써도 됨
+            StringTokenizer st = new StringTokenizer("  1   2   3  ");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+        }
+
+        @Test
+        void split_정규식_특수문자_주의() {
+            // split은 정규식을 받으므로 . | 등은 이스케이프 필요
+            String input = "a.b.c";
+
+            // 틀린 방법: .은 정규식에서 "모든 문자"
+            String[] wrong = input.split(".");
+            assertThat(wrong).isEmpty(); // 모든 문자가 구분자!
+
+            // 맞는 방법 1: 이스케이프
+            String[] correct1 = input.split("\\.");
+            assertThat(correct1).containsExactly("a", "b", "c");
+
+            // 맞는 방법 2: StringTokenizer (정규식 아님)
+            StringTokenizer st = new StringTokenizer(input, ".");
+            assertThat(st.countTokens()).isEqualTo(3);
+        }
+    }
 }
