@@ -279,4 +279,42 @@ public class StringTokenizerTest {
             assertThat(st.countTokens()).isEqualTo(3); // 빈 토큰 없음
         }
     }
+
+    // 구분자를 토큰으로 포함 (returnDelims)
+    @Nested
+    class 구분자를_토큰으로_포함 {
+
+        @Test
+        void returnDelims가_true면_구분자도_토큰으로_반환() {
+            StringTokenizer st = new StringTokenizer("aaa+bb-c", "+-", true);
+
+            assertThat(st.countTokens()).isEqualTo(5);
+            assertThat(st.nextToken()).isEqualTo("aaa");
+            assertThat(st.nextToken()).isEqualTo("+"); // 구분자도 토큰
+            assertThat(st.nextToken()).isEqualTo("bb");
+            assertThat(st.nextToken()).isEqualTo("-"); // 구분자도 토큰
+            assertThat(st.nextToken()).isEqualTo("c");
+        }
+
+        @Test
+        void 수식_파싱에_활용() {
+            StringTokenizer st = new StringTokenizer("10+20*30", "+*", true);
+
+            assertThat(st.nextToken()).isEqualTo("10");
+            assertThat(st.nextToken()).isEqualTo("+");
+            assertThat(st.nextToken()).isEqualTo("20");
+            assertThat(st.nextToken()).isEqualTo("*");
+            assertThat(st.nextToken()).isEqualTo("30");
+        }
+
+        @Test
+        void returnDelims에서도_연속_구분자는_각각_반환() {
+            StringTokenizer st = new StringTokenizer("a++b", "+", true);
+
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("+");
+            assertThat(st.nextToken()).isEqualTo("+"); // 두 번째 +도 별도 토큰
+            assertThat(st.nextToken()).isEqualTo("b");
+        }
+    }
 }
