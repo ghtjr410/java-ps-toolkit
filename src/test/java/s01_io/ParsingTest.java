@@ -198,4 +198,53 @@ public class ParsingTest {
             assertThatThrownBy(() -> Integer.parseInt(binary, 2)).isInstanceOf(NumberFormatException.class);
         }
     }
+
+    // parseInt vs valueOf
+    @Nested
+    class parseInt_vs_valueOf {
+
+        @Test
+        void parseInt는_기본형_int를_반환() {
+            int result = Integer.parseInt("123");
+
+            assertThat(result).isEqualTo(123);
+        }
+
+        @Test
+        void valueOf는_Integer_객체를_반환() {
+            Integer result = Integer.valueOf("123");
+
+            assertThat(result).isEqualTo(123);
+        }
+
+        @Test
+        void valueOf는_내부적으로_parseInt를_호출_후_박싱() {
+            /**
+             *     - 내부구현
+             *
+             *     public static Integer valueOf(String s) throws NumberFormatException {
+             *         return Integer.valueOf(parseInt(s, 10));
+             *     }
+             */
+
+            // 성능상 parseInt가 약간 유리 (박싱 비용 없음)
+            // PS에서는 보통 parseInt 사용
+            int primitive = Integer.parseInt("123");
+            Integer boxed = Integer.valueOf("123");
+
+            assertThat(primitive).isEqualTo(boxed);
+        }
+
+        @Test
+        void valueOf의_캐싱_범위는_마이너스128부터_127() {
+            // -128 ~ 127 범위는 캐싱됨
+            Integer a = Integer.valueOf("100");
+            Integer b = Integer.valueOf("100");
+            assertThat(a == b).isTrue(); // 같은 객체
+
+            Integer c = Integer.valueOf("200");
+            Integer d = Integer.valueOf("200");
+            assertThat(c == d).isFalse(); // 다른 객체
+        }
+    }
 }
