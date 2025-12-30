@@ -234,4 +234,49 @@ public class StringTokenizerTest {
             assertThat(splitResult).containsExactly("", "", "a", "", "b", "", "c"); // 빈 문자열 많음
         }
     }
+
+    // 커스텀 구분자
+    @Nested
+    class 커스텀_구분자 {
+
+        @Test
+        void 쉼표를_구분자로_사용() {
+            StringTokenizer st = new StringTokenizer("a,b,c", ",");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("b");
+            assertThat(st.nextToken()).isEqualTo("c");
+        }
+
+        @Test
+        void 여러_문자를_각각_구분자로_사용() {
+            // 두 번째 파라미터의 각 문자가 모두 구분자
+            StringTokenizer st = new StringTokenizer("a,b:c;d", ",;:");
+
+            assertThat(st.countTokens()).isEqualTo(4);
+            assertThat(st.nextToken()).isEqualTo("a");
+            assertThat(st.nextToken()).isEqualTo("b");
+            assertThat(st.nextToken()).isEqualTo("c");
+            assertThat(st.nextToken()).isEqualTo("d");
+        }
+
+        @Test
+        void 구분자는_문자열이_아니라_문자들의_집합이다() {
+            // "ab"가 구분자가 아니라, 'a'와 'b' 각각이 구분자
+            StringTokenizer st = new StringTokenizer("xaybz", "ab");
+
+            assertThat(st.countTokens()).isEqualTo(3);
+            assertThat(st.nextToken()).isEqualTo("x");
+            assertThat(st.nextToken()).isEqualTo("y");
+            assertThat(st.nextToken()).isEqualTo("z");
+        }
+
+        @Test
+        void 커스텀_구분자에도_연속_구분자_무시_적용() {
+            StringTokenizer st = new StringTokenizer("a,,b,,,c", ",");
+
+            assertThat(st.countTokens()).isEqualTo(3); // 빈 토큰 없음
+        }
+    }
 }
