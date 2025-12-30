@@ -290,4 +290,49 @@ public class ParsingTest {
             assertThat(Double.parseDouble(" 3.14 ")).isEqualTo(3.14);
         }
     }
+
+    // PS 실전 팁
+    @Nested
+    class PS_실전_팁 {
+
+        @Test
+        void 문제에서_N이_10의9승_이하면_int_가능() {
+            // 10^9 = 1,000,000,000 < 2,147,483,647 (int 최대값)
+            String s = "1000000000";
+            int result = Integer.parseInt(s);
+            assertThat(result).isEqualTo(1_000_000_000);
+        }
+
+        @Test
+        void 문제에서_N이_10의9승_초과면_long_필수() {
+            // 10^10 = 10,000,000,000 > int 범위
+            String s = "10000000000";
+            long result = Long.parseLong(s);
+            assertThat(result).isEqualTo(10_000_000_000L);
+        }
+
+        @Test
+        void 연산_결과가_클_수_있으면_long_사용() {
+            // N이 int 범위여도 N*N은 long이 필요할 수 있음!
+            int n = 100_000; // 10만, int 범위
+
+            // int로 계산하면 오버플로우
+            int wrongResult = n * n;
+            assertThat(wrongResult).isNotEqualTo(10_000_000_000L);
+
+            // long으로 계산
+            long correctResult = (long) n * n;
+            assertThat(correctResult).isEqualTo(10_000_000_000L);
+        }
+
+        @Test
+        void 숫자_리터럴에_언더스코어_사용_가능_Java7부터() {
+            // 가독성을 위해 사용
+            int million = 1_000_000;
+            long trillion = 1_000_000_000_000L;
+
+            assertThat(million).isEqualTo(1000000);
+            assertThat(trillion).isEqualTo(1000000000000L);
+        }
+    }
 }
