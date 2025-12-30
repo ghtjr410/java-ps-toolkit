@@ -3,6 +3,8 @@ package s01_io;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -120,7 +122,7 @@ public class StringTokenizerTest {
         }
     }
 
-    // ⭐⭐⭐ 연속 구분자 처리 - 핵심
+    // 연속 구분자 처리 - 핵심
     @Nested
     class 연속_구분자_처리_핵심 {
         // StringTokenizer는 빈 토큰을 절대 만들지 않는다.
@@ -158,6 +160,78 @@ public class StringTokenizerTest {
 
             assertThat(st.countTokens()).isEqualTo(0);
             assertThat(st.hasMoreTokens()).isFalse();
+        }
+    }
+
+    //  split()과의 결정적 차이
+    @Nested
+    class split과의_차이_핵심 {
+
+        @Test
+        void 연속_구분자_StringTokenizer는_빈토큰_없음() {
+            StringTokenizer st = new StringTokenizer("a  b");
+            List<String> tokens = new ArrayList<>();
+
+            while (st.hasMoreTokens()) {
+                tokens.add(st.nextToken());
+            }
+
+            assertThat(tokens).containsExactly("a", "b"); // 2개
+        }
+
+        @Test
+        void 연속_구분자_split은_빈문자열_생성() {
+            String[] parts = "a  b".split(" ");
+
+            assertThat(parts).containsExactly("a", "", "b"); // 3개 빈 문자열 포함
+        }
+
+        @Test
+        void 앞쪽_구분자_StringTokenizer는_무시() {
+            StringTokenizer st = new StringTokenizer("  hello");
+
+            assertThat(st.countTokens()).isEqualTo(1);
+            assertThat(st.nextToken()).isEqualTo("hello");
+        }
+
+        @Test
+        void 앞쪽_구분자_split은_빈문자열_생성() {
+            String[] parts = "  hello".split(" ");
+
+            assertThat(parts).containsExactly("", "", "hello"); // 앞에 빈 문자열 2
+        }
+
+        @Test
+        void 뒤쪽_구분자_split은_기본적으로_제거된다() {
+            // split의 특이한 동작: 뒤쪽 빈 문자열은 기본적으로 제거됨
+            String[] parts = "hello  ".split(" ");
+
+            assertThat(parts).containsExactly("hello"); // 뒤쪽 빈 문자열 제거됨
+        }
+
+        @Test
+        void 뒤쪽_구분자_split에_limit_마이너스1이면_유지() {
+            String[] parts = "hello  ".split(" ", -1);
+
+            assertThat(parts).containsExactly("hello", "", ""); // 빈 문자열 유지
+        }
+
+        @Test
+        void 종합_비교_테스트() {
+            String input = "  a  b  c  ";
+
+            // StringTokenizer
+            StringTokenizer st = new StringTokenizer(input);
+            List<String> stResult = new ArrayList<>();
+            while (st.hasMoreTokens()) {
+                stResult.add(st.nextToken());
+            }
+
+            // split
+            String[] splitResult = input.split(" ");
+
+            assertThat(stResult).containsExactly("a", "b", "c"); // 깔끔
+            assertThat(splitResult).containsExactly("", "", "a", "", "b", "", "c"); // 빈 문자열 많음
         }
     }
 }
