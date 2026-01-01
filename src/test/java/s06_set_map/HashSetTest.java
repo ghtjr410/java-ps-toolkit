@@ -98,4 +98,77 @@ public class HashSetTest {
             assertThat(set).isEmpty();
         }
     }
+
+    // add() 반환값 - 핵심
+    @Nested
+    class add_반환값_핵심 {
+
+        @Test
+        void add는_새_요소면_true를_반환한다() {
+            Set<Integer> set = new HashSet<>();
+
+            boolean result = set.add(1);
+
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void add는_이미_있는_요소면_false를_반환한다() {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+
+            boolean result = set.add(1); // 중복
+
+            assertThat(result).isFalse();
+        }
+
+        @Test
+        void add_반환값으로_contains_호출을_생략할_수_있다() {
+            Set<Integer> set = new HashSet<>();
+            int num = 5;
+
+            // 비효율: 두 번 조회
+            // if (!set.contains(num)) {
+            //     set.add(num);
+            // }
+
+            // 효율: 한 번에
+            if (set.add(num)) {
+                // 새 요소일 때 처리
+            }
+
+            assertThat(set).contains(5);
+        }
+
+        @Test
+        void add_반환값으로_중복_체크_패턴() {
+            Set<Integer> set = new HashSet<>();
+            int[] arr = {1, 2, 2, 3, 3, 3};
+
+            int duplicateCount = 0;
+            for (int num : arr) {
+                if (!set.add(num)) {
+                    duplicateCount++;
+                }
+            }
+
+            assertThat(duplicateCount).isEqualTo(3); // 2가 1번, 3이 2번 중복
+        }
+
+        @Test
+        void 첫_번째_중복_발견_시_바로_리턴_패턴() {
+            int[] arr = {1, 2, 3, 2, 4};
+            Set<Integer> set = new HashSet<>();
+
+            int firstDuplicate = -1;
+            for (int num : arr) {
+                if (!set.add(num)) {
+                    firstDuplicate = num;
+                    break;
+                }
+            }
+
+            assertThat(firstDuplicate).isEqualTo(2);
+        }
+    }
 }
