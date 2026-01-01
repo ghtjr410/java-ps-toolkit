@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -324,6 +325,50 @@ public class OutputTest {
             bw.close(); // close 시 자동 flush
 
             assertThat(sw.toString()).isEqualTo("Hello");
+        }
+    }
+
+    // PrintWriter (편의성 vs 성능)
+    @Nested
+    class PrintWriter_사용 {
+
+        @Test
+        void println으로_편하게_출력() {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            pw.println("Hello");
+            pw.println(123); // 숫자도 바로 출력 가능
+            pw.println(3.14);
+            pw.flush();
+
+            assertThat(sw.toString()).contains("Hello");
+            assertThat(sw.toString()).contains("123");
+            assertThat(sw.toString()).contains("3.14");
+        }
+
+        @Test
+        void printf로_포맷팅() {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            pw.printf("Name: %s, Age: %d%n", "Kim", 25);
+            pw.flush();
+
+            assertThat(sw.toString()).contains("Name: Kim, Age: 25");
+        }
+
+        @Test
+        void print는_개행_없이_출력() {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            pw.print("Hello");
+            pw.print(" ");
+            pw.print("World");
+            pw.flush();
+
+            assertThat(sw.toString()).isEqualTo("Hello World");
         }
     }
 }
