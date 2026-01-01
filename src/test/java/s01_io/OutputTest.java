@@ -2,6 +2,9 @@ package s01_io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -222,6 +225,49 @@ public class OutputTest {
 
             assertThat(sb.toString()).isEmpty();
             assertThat(sb.length()).isZero();
+        }
+    }
+
+    // BufferedWriter 기본
+    @Nested
+    class BufferedWriter_기본 {
+
+        @Test
+        void write로_문자열을_쓴다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            bw.write("Hello World");
+            bw.flush();
+
+            assertThat(sw.toString()).isEqualTo("Hello World");
+        }
+
+        @Test
+        void newLine으로_개행을_추가한다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            bw.write("line1");
+            bw.newLine();
+            bw.write("line2");
+            bw.flush();
+
+            assertThat(sw.toString()).contains("line1");
+            assertThat(sw.toString()).contains("line2");
+            assertThat(sw.toString()).isEqualTo("line1\nline2");
+        }
+
+        @Test
+        void 개행은_직접_write해도_된다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            bw.write("line1\n");
+            bw.write("line2");
+            bw.flush();
+
+            assertThat(sw.toString()).isEqualTo("line1\nline2");
         }
     }
 }
