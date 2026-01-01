@@ -400,4 +400,60 @@ public class OutputTest {
             assertThat(sb.toString()).isEqualTo("test");
         }
     }
+
+    // 성능 비교 개념
+    @Nested
+    class 성능_개념 {
+
+        @Test
+        void System_out_println_반복은_느리다() {
+            // 개념 설명용 테스트
+            // System.out.println()은 매 호출마다 동기화 + 버퍼 플러시 발생
+            // N이 10만 이상이면 시간 초과 위험
+
+            int n = 100;
+            StringBuilder sb = new StringBuilder();
+
+            // 느린 방법 (개념만):
+            // for (int i = 0; i < n; i++) System.out.println(i);
+
+            /*
+             * 왜 느린가?
+             * println() 호출마다:
+             * 1. synchronized 락 획득 (스레드 안전 보장)
+             * 2. 버퍼에 쓰기
+             * 3. 버퍼 flush (실제 출력)
+             * 4. 락 해제
+             *
+             * → 10만 번 반복하면 이 과정이 10만 번
+             */
+
+            // 빠른 방법:
+            for (int i = 0; i < n; i++) {
+                sb.append(i).append("\n");
+            }
+
+            assertThat(sb.toString().split("\n")).hasSize(n);
+        }
+
+        @Test
+        void 문자열_더하기_반복도_느리다() {
+            // String은 불변이라 + 연산마다 새 객체 생성
+            // O(N^2) 시간복잡도
+
+            int n = 100;
+
+            // 느린 방법 (개념만):
+            // String result = "";
+            // for (int i = 0; i < n; i++) result += i + "\n"; // 매번 새 String 객체 생성
+
+            // 빠른 방법: StringBuilder
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < n; i++) {
+                sb.append(i).append("\n"); // 같은 객체에 추가
+            }
+
+            assertThat(sb.length()).isGreaterThan(0);
+        }
+    }
 }
