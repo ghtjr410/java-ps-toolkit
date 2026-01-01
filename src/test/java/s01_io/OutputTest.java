@@ -456,4 +456,65 @@ public class OutputTest {
             assertThat(sb.length()).isGreaterThan(0);
         }
     }
+
+    // PS 권장 출력 패턴
+    @Nested
+    class PS_권장_패턴 {
+
+        @Test
+        void 가장_간단한_패턴_StringBuilder() {
+            // 권장: 가장 실수가 적음
+            StringBuilder sb = new StringBuilder();
+
+            int[] results = {1, 2, 3};
+            for (int r : results) {
+                sb.append(r).append("\n");
+            }
+
+            // System.out.print(sb);
+            assertThat(sb.toString()).isEqualTo("1\n2\n3\n");
+        }
+
+        @Test
+        void 마지막_개행_없애기() {
+            int[] arr = {1, 2, 3};
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < arr.length; i++) {
+                if (i > 0) sb.append("\n");
+                sb.append(arr[i]);
+            }
+
+            assertThat(sb.toString()).isEqualTo("1\n2\n3"); // 마지막에 \n 없음
+        }
+
+        @Test
+        void 마지막_공백_없애기() {
+            int[] arr = {1, 2, 3};
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < arr.length; i++) {
+                if (i > 0) sb.append(" ");
+                sb.append(arr[i]);
+            }
+
+            assertThat(sb.toString()).isEqualTo("1 2 3"); // 마지막에 공백 없음
+        }
+
+        @Test
+        void deleteCharAt으로_마지막_문자_제거() {
+            StringBuilder sb = new StringBuilder();
+
+            int[] arr = {1, 2, 3};
+            for (int n : arr) {
+                sb.append(n).append(" ");
+            }
+
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1); // 마지막 공백 제거
+            }
+
+            assertThat(sb.toString()).isEqualTo("1 2 3");
+        }
+    }
 }
