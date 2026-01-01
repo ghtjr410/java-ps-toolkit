@@ -270,4 +270,60 @@ public class OutputTest {
             assertThat(sw.toString()).isEqualTo("line1\nline2");
         }
     }
+
+    // BufferedWriter 핵심 함정
+    @Nested
+    class BufferedWriter_함정 {
+
+        @Test
+        void write에_int를_넣으면_문자로_해석된다_함정() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            // 숫자 65를 출력을 예상했지만
+            bw.write(65); // 65는 'A'의 ASCII 코드
+            bw.flush();
+
+            assertThat(sw.toString()).isEqualTo("A"); // "65"가 아님
+        }
+
+        @Test
+        void 숫자를_출력하려면_문자열로_변환해야_한다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            int number = 65;
+            bw.write(String.valueOf(number)); // 문자열로 변환
+            // 또는: bw.write(Integer.toString(number));
+            // 또는: bw.write(number + "");
+            bw.flush();
+
+            assertThat(sw.toString()).isEqualTo("65");
+        }
+
+        @Test
+        void flush를_안_하면_출력이_안_될_수_있다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            bw.write("Hello");
+            // flush() 없이는 버퍼에만 있고 출력 안 될 수 있음
+            // (StringWriter는 바로 반영되지만, 실제 파일/콘솔은 다름)
+
+            bw.flush(); // 버퍼 비우기
+
+            assertThat(sw.toString()).isEqualTo("Hello");
+        }
+
+        @Test
+        void close는_자동으로_flush한다() throws IOException {
+            StringWriter sw = new StringWriter();
+            BufferedWriter bw = new BufferedWriter(sw);
+
+            bw.write("Hello");
+            bw.close(); // close 시 자동 flush
+
+            assertThat(sw.toString()).isEqualTo("Hello");
+        }
+    }
 }
