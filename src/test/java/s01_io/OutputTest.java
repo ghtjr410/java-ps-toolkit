@@ -371,4 +371,33 @@ public class OutputTest {
             assertThat(sw.toString()).isEqualTo("Hello World");
         }
     }
+
+    // try-with-resources 패턴
+    @Nested
+    class 리소스_관리 {
+
+        @Test
+        void try_with_resources로_자동_close() throws IOException {
+            StringWriter sw = new StringWriter();
+
+            try (BufferedWriter bw = new BufferedWriter(sw)) {
+                bw.write("Hello");
+            } // 자동으로 close() 호출됨 (flush 포함)
+
+            assertThat(sw.toString()).isEqualTo("Hello");
+        }
+
+        @Test
+        void PS에서는_보통_close_생략해도_됨() {
+            // PS 환경에서는 프로그램 종료 시 자동 정리됨
+            // 하지만 명시적으로 하는 것이 좋은 습관
+
+            // StringBuilder는 I/O 리소스가 아니라 메모리 객체라서 close 필요없음
+            StringBuilder sb = new StringBuilder();
+            sb.append("test");
+
+            // System.out.print(sb)는 close 필요 없음
+            assertThat(sb.toString()).isEqualTo("test");
+        }
+    }
 }
