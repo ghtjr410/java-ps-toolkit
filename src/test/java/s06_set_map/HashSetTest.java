@@ -2,8 +2,7 @@ package s06_set_map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -169,6 +168,87 @@ public class HashSetTest {
             }
 
             assertThat(firstDuplicate).isEqualTo(2);
+        }
+    }
+
+    // 순서 보장 안 됨 - 핵심
+    @Nested
+    class 순서_보장_안됨_핵심 {
+
+        @Test
+        void 순회_순서는_삽입_순서와_다를_수_있다() {
+            Set<Integer> set = new HashSet<>();
+            set.add(3);
+            set.add(1);
+            set.add(2);
+
+            List<Integer> iterationOrder = new ArrayList<>(set);
+
+            // 순서가 3, 1, 2가 아닐 수 있음
+            // HashSet은 해시값 기반으로 저장하므로 순서 예측 불가
+            assertThat(iterationOrder).containsExactlyInAnyOrder(1, 2, 3);
+            // containsExactly가 아닌 containsExactlyInAnyOrder
+        }
+
+        @Test
+        void 같은_요소라도_순서가_다를_수_있다는_것을_인지() {
+            // 이 테스트는 개념 설명용
+            // 실제로 HashSet의 순서는 구현에 따라 다를 수 있음
+            Set<Integer> set1 = new HashSet<>();
+            Set<Integer> set2 = new HashSet<>();
+
+            // 다른 순서로 삽입
+            set1.add(1);
+            set1.add(2);
+
+            set2.add(2);
+            set2.add(1);
+
+            // 내용은 같음
+            assertThat(set1).isEqualTo(set2);
+
+            // 하지만 순회 순서는 보장되지 않음을 인지해야 함
+        }
+
+        @Test
+        void 정렬_필요하면_List로_변환_후_정렬() {
+            Set<Integer> set = new HashSet<>();
+            set.add(3);
+            set.add(1);
+            set.add(2);
+
+            List<Integer> sorted = new ArrayList<>(set);
+            Collections.sort(sorted);
+
+            assertThat(sorted).containsExactly(1, 2, 3);
+        }
+
+        @Test
+        void 정렬_필요하면_처음부터_TreeSet_사용() {
+            Set<Integer> set = new TreeSet<>();
+            set.add(3);
+            set.add(1);
+            set.add(2);
+
+            // TreeSet은 자동 정렬
+            assertThat(set).containsExactly(1, 2, 3);
+        }
+
+        @Test
+        void 순서가_필요하면_LinkedHashSet_사용() {
+            // 순서 필요 시: LinkedHashSet (삽입 순서 유지)
+            // 정렬 필요 시: TreeSet (자동 정렬)
+            Set<Integer> hashSet = new HashSet<>();
+            hashSet.add(3);
+            hashSet.add(1);
+            hashSet.add(2);
+
+            // HashSet을 List로 바꾸면 순서가 보장되지 않음을 인지
+            // 정렬이 필요하면 별도로 정렬해야 함
+            List<Integer> sorted = new ArrayList<>(hashSet);
+            sorted.sort(null); // 정렬
+
+            assertThat(sorted).containsExactly(1, 2, 3);
         }
     }
 }
