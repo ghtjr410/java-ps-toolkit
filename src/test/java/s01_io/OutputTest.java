@@ -145,4 +145,83 @@ public class OutputTest {
             assertThat(output).isEqualTo("1\n2\n3\n");
         }
     }
+
+    // StringBuilder 수정 메서드
+    @Nested
+    class StringBuilder_수정 {
+
+        @Test
+        void setCharAt으로_특정_위치_문자_변경() {
+            StringBuilder sb = new StringBuilder("Hello");
+
+            sb.setCharAt(0, 'J');
+
+            assertThat(sb.toString()).isEqualTo("Jello");
+        }
+
+        @Test
+        void deleteCharAt으로_특정_위치_문자_삭제() {
+            StringBuilder sb = new StringBuilder("Hello");
+
+            sb.deleteCharAt(1);
+
+            assertThat(sb.toString()).isEqualTo("Hllo");
+        }
+
+        @Test
+        void delete로_범위_삭제() {
+            StringBuilder sb = new StringBuilder("Hello World");
+
+            sb.delete(5, 11); // " World" 삭제
+
+            assertThat(sb.toString()).isEqualTo("Hello");
+        }
+
+        @Test
+        void insert로_중간에_삽입() {
+            StringBuilder sb = new StringBuilder("Hello!");
+
+            sb.insert(5, " World");
+
+            assertThat(sb.toString()).isEqualTo("Hello World!");
+        }
+
+        @Test
+        void reverse로_뒤집기() {
+            StringBuilder sb = new StringBuilder("Hello");
+
+            sb.reverse();
+
+            assertThat(sb.toString()).isEqualTo("olleH");
+        }
+
+        @Test
+        void reverse는_원본을_변경한다() {
+            StringBuilder sb = new StringBuilder("ABC");
+
+            StringBuilder result = sb.reverse();
+
+            assertThat(result).isSameAs(sb); // 같은 객체
+            assertThat(sb.toString()).isEqualTo("CBA");
+        }
+
+        @Test
+        void setLength로_길이_조절() {
+            StringBuilder sb = new StringBuilder("Hello World");
+
+            sb.setLength(5); // 뒤쪽 잘라내기
+
+            assertThat(sb.toString()).isEqualTo("Hello");
+        }
+
+        @Test
+        void setLength_0으로_초기화() {
+            StringBuilder sb = new StringBuilder("Hello");
+
+            sb.setLength(0); // 비우기 (new StringBuilder()보다 효율적)
+
+            assertThat(sb.toString()).isEmpty();
+            assertThat(sb.length()).isZero();
+        }
+    }
 }
