@@ -423,4 +423,88 @@ public class HashSetTest {
             assertThat(set).containsExactlyInAnyOrder(1, 3, 5);
         }
     }
+
+    // PS 실전 패턴
+    @Nested
+    class PS_실전_패턴 {
+
+        @Test
+        void 배열에서_중복_제거() {
+            int[] arr = {1, 2, 2, 3, 3, 3, 4};
+            Set<Integer> set = new HashSet<>();
+
+            for (int num : arr) {
+                set.add(num);
+            }
+
+            assertThat(set).hasSize(4);
+            assertThat(set).containsExactlyInAnyOrder(1, 2, 3, 4);
+        }
+
+        @Test
+        void 중복_없는_개수_세기() {
+            int[] arr = {1, 2, 2, 3, 3, 3};
+            Set<Integer> set = new HashSet<>();
+
+            for (int num : arr) {
+                set.add(num);
+            }
+
+            int uniqueCount = set.size();
+
+            assertThat(uniqueCount).isEqualTo(3);
+        }
+
+        @Test
+        void 방문_체크_visited() {
+            Set<Integer> visited = new HashSet<>();
+            int[] nodes = {1, 2, 3, 2, 4, 1};
+
+            List<Integer> firstVisitOrder = new ArrayList<>();
+            for (int node : nodes) {
+                if (visited.add(node)) {
+                    firstVisitOrder.add(node);
+                }
+            }
+
+            assertThat(firstVisitOrder).containsExactly(1, 2, 3, 4);
+        }
+
+        @Test
+        void 두_배열의_공통_요소_찾기() {
+            int[] arr1 = {1, 2, 3, 4, 5};
+            int[] arr2 = {4, 5, 6, 7, 8};
+
+            Set<Integer> set1 = new HashSet<>();
+            for (int n : arr1) set1.add(n);
+
+            List<Integer> common = new ArrayList<>();
+            for (int n : arr2) {
+                if (set1.contains(n)) {
+                    common.add(n);
+                }
+            }
+
+            assertThat(common).containsExactlyInAnyOrder(4, 5);
+        }
+
+        @Test
+        void Set을_정렬된_배열로_변환() {
+            Set<Integer> set = new HashSet<>(Set.of(5, 2, 8, 1, 9));
+
+            int[] sorted = set.stream().sorted().mapToInt(Integer::intValue).toArray();
+
+            assertThat(sorted).containsExactly(1, 2, 5, 8, 9);
+        }
+
+        @Test
+        void List에서_중복_제거_후_다시_List로() {
+            List<Integer> list = List.of(1, 2, 2, 3, 3, 3);
+
+            List<Integer> unique = new ArrayList<>(new HashSet<>(list));
+            // 주의: 순서가 보장되지 않음
+
+            assertThat(unique).containsExactlyInAnyOrder(1, 2, 3);
+        }
+    }
 }
