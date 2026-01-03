@@ -360,4 +360,67 @@ public class HashSetTest {
             assertThat(subset.containsAll(superset)).isFalse();
         }
     }
+
+    // 순회 방법
+    @Nested
+    class 순회_방법 {
+
+        @Test
+        void for_each_loop() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3));
+            List<Integer> result = new ArrayList<>();
+
+            for (Integer num : set) {
+                result.add(num);
+            }
+
+            assertThat(result).containsExactlyInAnyOrder(1, 2, 3);
+        }
+
+        @Test
+        void forEach_메서드() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3));
+            List<Integer> result = new ArrayList<>();
+
+            set.forEach(result::add);
+
+            assertThat(result).containsExactlyInAnyOrder(1, 2, 3);
+        }
+
+        @Test
+        void Iterator_사용() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3));
+            List<Integer> result = new ArrayList<>();
+
+            Iterator<Integer> iter = set.iterator();
+            while (iter.hasNext()) {
+                result.add(iter.next());
+            }
+
+            assertThat(result).containsExactlyInAnyOrder(1, 2, 3);
+        }
+
+        @Test
+        void Iterator로_안전하게_삭제() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3, 4, 5));
+
+            Iterator<Integer> iter = set.iterator();
+            while (iter.hasNext()) {
+                if (iter.next() % 2 == 0) {
+                    iter.remove(); // 안전한 삭제!
+                }
+            }
+
+            assertThat(set).containsExactlyInAnyOrder(1, 3, 5);
+        }
+
+        @Test
+        void removeIf로_조건부_삭제() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3, 4, 5));
+
+            set.removeIf(n -> n % 2 == 0);
+
+            assertThat(set).containsExactlyInAnyOrder(1, 3, 5);
+        }
+    }
 }
