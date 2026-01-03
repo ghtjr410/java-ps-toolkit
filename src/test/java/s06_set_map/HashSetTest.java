@@ -251,4 +251,69 @@ public class HashSetTest {
             assertThat(sorted).containsExactly(1, 2, 3);
         }
     }
+
+    // remove() 동작
+    @Nested
+    class remove_동작 {
+
+        @Test
+        void remove는_삭제_성공시_true_반환() {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+
+            boolean result = set.remove(1);
+
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void remove는_없는_요소면_false_반환() {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+
+            boolean result = set.remove(999);
+
+            assertThat(result).isFalse();
+        }
+
+        @Test
+        void removeAll로_여러_요소_삭제_변경됨() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3, 4));
+
+            boolean result = set.removeAll(Set.of(2, 4));
+
+            assertThat(result).isTrue(); // 삭제된 요소 있음
+            assertThat(set).containsExactlyInAnyOrder(1, 3);
+        }
+
+        @Test
+        void removeAll로_여러_요소_삭제_변경없음() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3, 4));
+
+            boolean result = set.removeAll(Set.of(99, 100));
+
+            assertThat(result).isFalse(); // 삭제된 요소 없음
+            assertThat(set).containsExactlyInAnyOrder(1, 2, 3, 4);
+        }
+
+        @Test
+        void retainAll로_교집합만_유지_변경됨() {
+            Set<Integer> set = new HashSet<>(Set.of(1, 2, 3));
+
+            boolean result = set.retainAll(Set.of(2, 3, 4));
+
+            assertThat(result).isTrue(); // 1이 제거됨
+            assertThat(set).containsExactlyInAnyOrder(2, 3);
+        }
+
+        @Test
+        void retainAll로_교집합만_유지_변경없음() {
+            Set<Integer> set = new HashSet<>(Set.of(2, 3));
+
+            boolean result = set.retainAll(Set.of(2, 3, 4));
+
+            assertThat(result).isFalse(); // 변경 없음, 이미 교집합 상태
+            assertThat(set).containsExactlyInAnyOrder(2, 3);
+        }
+    }
 }
