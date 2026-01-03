@@ -316,4 +316,48 @@ public class HashSetTest {
             assertThat(set).containsExactlyInAnyOrder(2, 3);
         }
     }
+
+    // 집합 연산
+    @Nested
+    class 집합_연산 {
+
+        @Test
+        void addAll로_합집합() {
+            Set<Integer> set1 = new HashSet<>(Set.of(1, 2, 3));
+            Set<Integer> set2 = new HashSet<>(Set.of(3, 4, 5));
+
+            set1.addAll(set2);
+
+            assertThat(set1).containsExactlyInAnyOrder(1, 2, 3, 4, 5);
+        }
+
+        @Test
+        void retainAll로_교집합() {
+            Set<Integer> set1 = new HashSet<>(Set.of(1, 2, 3));
+            Set<Integer> set2 = new HashSet<>(Set.of(2, 3, 4));
+
+            set1.retainAll(set2);
+
+            assertThat(set1).containsExactlyInAnyOrder(2, 3);
+        }
+
+        @Test
+        void removeAll로_차집합() {
+            Set<Integer> set1 = new HashSet<>(Set.of(1, 2, 3));
+            Set<Integer> set2 = new HashSet<>(Set.of(2, 3, 4));
+
+            set1.removeAll(set2); // set1 - set2
+
+            assertThat(set1).containsExactlyInAnyOrder(1);
+        }
+
+        @Test
+        void containsAll로_부분집합_확인() {
+            Set<Integer> superset = new HashSet<>(Set.of(1, 2, 3, 4, 5));
+            Set<Integer> subset = new HashSet<>(Set.of(2, 3));
+
+            assertThat(superset.containsAll(subset)).isTrue();
+            assertThat(subset.containsAll(superset)).isFalse();
+        }
+    }
 }
