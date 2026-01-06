@@ -2,64 +2,74 @@ package s06_set_map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * LinkedHashSet 및 Set 구현체 비교 학습 테스트
+ * TreeSet 학습 테스트
  *
- * Set 구현체 선택 가이드:
- * - HashSet: 순서 필요 없음, 빠름 (O(1)) → 기본 선택
- * - LinkedHashSet: 삽입 순서 유지, 빠름 (O(1))
- * - TreeSet: 정렬 유지, floor/ceiling 필요 (O(log n))
+ * 핵심 특성:
+ * - 자동 정렬 (기본: 오름차순)
+ * - O(log n) 추가/삭제/조회 (Red-Black Tree 기반)
+ * - 중복 허용 안 함
+ *
+ * PS 활용 (매우 유용):
+ * - 정렬된 상태 유지가 필요할 때
+ * - 특정 값 이상/이하/초과/미만 요소 찾기 (floor, ceiling, lower, higher)
+ * - 범위 검색 (subSet, headSet, tailSet)
  */
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class TreeSetTest {
 
-    // LinkedHashSet 기본
+    // 기본 사용법 & 자동 정렬
     @Nested
-    class LinkedHashSet_기본 {
+    class 기본_사용법_자동_정렬 {
 
         @Test
-        void 삽입_순서가_유지된다() {
-            Set<Integer> set = new LinkedHashSet<>();
+        void 삽입_순서와_관계없이_정렬된다() {
+            TreeSet<Integer> set = new TreeSet<>();
 
-            set.add(3);
-            set.add(1);
-            set.add(4);
-            set.add(1); // 중복, 무시됨
             set.add(5);
-            set.add(9);
-            set.add(2);
-
-            assertThat(set).containsExactly(3, 1, 4, 5, 9, 2); // 삽입 순서!
-        }
-
-        @Test
-        void 이미_있는_요소_추가해도_순서_안_바뀜() {
-            Set<Integer> set = new LinkedHashSet<>();
             set.add(1);
-            set.add(2);
             set.add(3);
+            set.add(2);
+            set.add(4);
 
-            set.add(1); // 이미 있음
-
-            // 1의 위치는 그대로 첫 번째
-            assertThat(set).containsExactly(1, 2, 3);
+            assertThat(set).containsExactly(1, 2, 3, 4, 5); // 자동 정렬
         }
 
         @Test
-        void 중복_제거하면서_순서_유지() {
-            List<Integer> listWithDuplicates = List.of(3, 1, 2, 3, 1, 4, 2, 5);
+        void 기본_정렬은_오름차순() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(30);
+            set.add(10);
+            set.add(20);
 
-            Set<Integer> unique = new LinkedHashSet<>(listWithDuplicates);
+            assertThat(set.first()).isEqualTo(10);
+            assertThat(set.last()).isEqualTo(30);
+        }
 
-            assertThat(unique).containsExactly(3, 1, 2, 4, 5); // 첫 등장 순서!
+        @Test
+        void 문자열도_사전순_정렬() {
+            TreeSet<String> set = new TreeSet<>();
+            set.add("banana");
+            set.add("apple");
+            set.add("cherry");
+
+            assertThat(set).containsExactly("apple", "banana", "cherry");
+        }
+
+        @Test
+        void 중복은_허용되지_않는다() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(1);
+            set.add(1);
+            set.add(1);
+
+            assertThat(set).hasSize(1);
         }
     }
 }
