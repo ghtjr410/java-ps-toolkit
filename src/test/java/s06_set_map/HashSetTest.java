@@ -507,4 +507,44 @@ public class HashSetTest {
             assertThat(unique).containsExactlyInAnyOrder(1, 2, 3);
         }
     }
+
+    // 생성 방법들
+    @Nested
+    class 생성_방법 {
+
+        @Test
+        void 기본_생성자() {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+
+            assertThat(set).containsExactly(1);
+        }
+
+        @Test
+        void 컬렉션으로_초기화() {
+            List<Integer> list = List.of(1, 2, 2, 3);
+            Set<Integer> set = new HashSet<>(list);
+
+            assertThat(set).containsExactlyInAnyOrder(1, 2, 3);
+        }
+
+        @Test
+        void Set_of로_불변_Set_생성() {
+            Set<Integer> immutableSet = Set.of(1, 2, 3);
+
+            assertThat(immutableSet).containsExactlyInAnyOrder(1, 2, 3);
+            // immutableSet.add(4);  // UnsupportedOperationException
+        }
+
+        @Test
+        void 초기_용량_지정() {
+            // 많은 요소를 추가할 예정이면 초기 용량 지정으로 성능 향상
+            Set<Integer> set = new HashSet<>(10000);
+            for (int i = 0; i < 10000; i++) {
+                set.add(i);
+            }
+
+            assertThat(set).hasSize(10000);
+        }
+    }
 }
