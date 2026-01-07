@@ -176,4 +176,93 @@ public class TreeSetTest {
             assertThat(set.pollLast()).isNull();
         }
     }
+
+    // floor, ceiling, lower, higher - PS 핵심
+    @Nested
+    class floor_ceiling_lower_higher_핵심 {
+
+        /*
+         * 핵심 정리:
+         * - floor(x):   x 이하 중 최대  (x 포함, ≤)
+         * - ceiling(x): x 이상 중 최소  (x 포함, ≥)
+         * - lower(x):   x 미만 중 최대  (x 미포함, <)
+         * - higher(x):  x 초과 중 최소  (x 미포함, >)
+         */
+
+        TreeSet<Integer> createSet() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(10);
+            set.add(20);
+            set.add(30);
+            set.add(40);
+            set.add(50);
+            return set;
+            // set = {10, 20, 30, 40, 50}
+        }
+
+        @Test
+        void floor는_이하_중_최대_x_포함() {
+            TreeSet<Integer> set = createSet();
+
+            assertThat(set.floor(30)).isEqualTo(30); // 30 이하 중 최대 = 30
+            assertThat(set.floor(35)).isEqualTo(30); // 35 이하 중 최대 = 30
+            assertThat(set.floor(25)).isEqualTo(20); // 25 이하 중 최대 = 20
+        }
+
+        @Test
+        void ceiling은_이상_중_최소_x_포함() {
+            TreeSet<Integer> set = createSet();
+
+            assertThat(set.ceiling(30)).isEqualTo(30); // 30 이상 중 최소 = 30
+            assertThat(set.ceiling(25)).isEqualTo(30); // 25 이상 중 최소 = 30
+            assertThat(set.ceiling(35)).isEqualTo(40); // 35 이상 중 최소 = 40
+        }
+
+        @Test
+        void lower는_미만_중_최대_x_미포함() {
+            TreeSet<Integer> set = createSet();
+
+            assertThat(set.lower(30)).isEqualTo(20); // 30 미만 중 최대 = 20
+            assertThat(set.lower(35)).isEqualTo(30); // 35 미만 중 최대 = 30
+            assertThat(set.lower(31)).isEqualTo(30); // 31 미만 중 최대 = 30
+        }
+
+        @Test
+        void higher는_초과_중_최소_x_미포함() {
+            TreeSet<Integer> set = createSet();
+
+            assertThat(set.higher(30)).isEqualTo(40); // 30 초과 중 최소 = 40
+            assertThat(set.higher(25)).isEqualTo(30); // 25 초과 중 최소 = 30
+            assertThat(set.higher(29)).isEqualTo(30); // 29 초과 중 최소 = 30
+        }
+
+        @Test
+        void floor와_lower의_차이() {
+            TreeSet<Integer> set = createSet();
+
+            // x가 set에 있을 때 차이가 명확
+            assertThat(set.floor(30)).isEqualTo(30); // 30 포함
+            assertThat(set.lower(30)).isEqualTo(20); // 30 미포함
+        }
+
+        @Test
+        void ceiling과_higher의_차이() {
+            TreeSet<Integer> set = createSet();
+
+            // x가 set에 있을 때 차이가 명확
+            assertThat(set.ceiling(30)).isEqualTo(30); // 30 포함
+            assertThat(set.higher(30)).isEqualTo(40); // 30 미포함
+        }
+
+        @Test
+        void 없으면_null_반환() {
+            TreeSet<Integer> set = createSet();
+            // set = {10, 20, 30, 40, 50}
+
+            assertThat(set.floor(5)).isNull(); // 5 이하 없음
+            assertThat(set.ceiling(55)).isNull(); // 55 이상 없음
+            assertThat(set.lower(10)).isNull(); // 10 미만 없음
+            assertThat(set.higher(50)).isNull(); // 50 초과 없음
+        }
+    }
 }
