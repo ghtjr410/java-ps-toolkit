@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Comparator;
+import java.util.NavigableSet;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -263,6 +265,89 @@ public class TreeSetTest {
             assertThat(set.ceiling(55)).isNull(); // 55 이상 없음
             assertThat(set.lower(10)).isNull(); // 10 미만 없음
             assertThat(set.higher(50)).isNull(); // 50 초과 없음
+        }
+    }
+
+    // subSet, headSet, tailSet - 범위 조회
+    @Nested
+    class 범위_조회 {
+
+        TreeSet<Integer> createSet() {
+            TreeSet<Integer> set = new TreeSet<>();
+            for (int i = 10; i <= 50; i += 10) {
+                set.add(i); // {10, 20, 30, 40, 50}
+            }
+            return set;
+        }
+
+        @Test
+        void subSet_from이상_to미만() {
+            TreeSet<Integer> set = createSet();
+
+            // 20 이상 40 미만
+            SortedSet<Integer> sub = set.subSet(20, 40);
+
+            assertThat(sub).containsExactly(20, 30);
+        }
+
+        @Test
+        void subSet_inclusive_지정_가능() {
+            TreeSet<Integer> set = createSet();
+
+            // 20 이상 40 이하 (NavigableSet 버전)
+            NavigableSet<Integer> sub = set.subSet(20, true, 40, true);
+
+            assertThat(sub).containsExactly(20, 30, 40);
+        }
+
+        @Test
+        void headSet_특정값_미만() {
+            TreeSet<Integer> set = createSet();
+
+            // 30 미만
+            SortedSet<Integer> head = set.headSet(30);
+
+            assertThat(head).containsExactly(10, 20);
+        }
+
+        @Test
+        void headSet_inclusive_지정_가능() {
+            TreeSet<Integer> set = createSet();
+
+            // 30 이하
+            NavigableSet<Integer> head = set.headSet(30, true);
+
+            assertThat(head).containsExactly(10, 20, 30);
+        }
+
+        @Test
+        void tailSet_특정값_이상() {
+            TreeSet<Integer> set = createSet();
+
+            // 30 이상
+            SortedSet<Integer> tail = set.tailSet(30);
+
+            assertThat(tail).containsExactly(30, 40, 50);
+        }
+
+        @Test
+        void tailSet_exclusive_지정_가능() {
+            TreeSet<Integer> set = createSet();
+
+            // 30 초과
+            NavigableSet<Integer> tail = set.tailSet(30, false);
+
+            assertThat(tail).containsExactly(40, 50);
+        }
+
+        @Test
+        void 범위_뷰는_원본과_연결되어있다() {
+            TreeSet<Integer> set = createSet();
+            SortedSet<Integer> sub = set.subSet(20, 40);
+
+            set.add(25); // 원본에 추가
+
+            assertThat(sub).containsExactly(20, 25, 30); // 뷰에도 반영
         }
     }
 }
