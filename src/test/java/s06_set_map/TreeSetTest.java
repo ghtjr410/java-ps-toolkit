@@ -1,7 +1,9 @@
 package s06_set_map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -70,6 +72,42 @@ public class TreeSetTest {
             set.add(1);
 
             assertThat(set).hasSize(1);
+        }
+    }
+
+    // Comparator로 정렬 기준 변경
+    @Nested
+    class 커스텀_정렬 {
+
+        @Test
+        void reverseOrder로_내림차순() {
+            TreeSet<Integer> set = new TreeSet<>(Comparator.reverseOrder());
+
+            set.add(1);
+            set.add(3);
+            set.add(2);
+
+            assertThat(set).containsExactly(3, 2, 1);
+        }
+
+        @Test
+        void 커스텀_Comparator() {
+            // 절대값 기준 정렬
+            TreeSet<Integer> set = new TreeSet<>(Comparator.comparingInt(Math::abs));
+
+            set.add(-5);
+            set.add(3);
+            set.add(-1);
+            set.add(4);
+
+            assertThat(set).containsExactly(-1, 3, 4, -5);
+        }
+
+        @Test
+        void Comparable_구현_안된_객체는_예외() {
+            TreeSet<Object> set = new TreeSet<>();
+
+            assertThatThrownBy(() -> set.add(new Object())).isInstanceOf(ClassCastException.class);
         }
     }
 }
