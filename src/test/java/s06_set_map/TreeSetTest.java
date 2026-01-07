@@ -110,4 +110,70 @@ public class TreeSetTest {
             assertThatThrownBy(() -> set.add(new Object())).isInstanceOf(ClassCastException.class);
         }
     }
+
+    // first(), last() - 최솟값, 최댓값
+    @Nested
+    class first_last_최소_최대 {
+
+        @Test
+        void first는_최솟값을_반환() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(30);
+            set.add(10);
+            set.add(20);
+
+            assertThat(set.first()).isEqualTo(10);
+        }
+
+        @Test
+        void last는_최댓값을_반환() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(30);
+            set.add(10);
+            set.add(20);
+
+            assertThat(set.last()).isEqualTo(30);
+        }
+
+        @Test
+        void 비어있으면_NoSuchElementException() {
+            TreeSet<Integer> set = new TreeSet<>();
+
+            assertThatThrownBy(set::first).isInstanceOf(java.util.NoSuchElementException.class);
+        }
+
+        @Test
+        void pollFirst는_최솟값을_꺼내고_삭제() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(3);
+            set.add(1);
+            set.add(2);
+
+            Integer min = set.pollFirst();
+
+            assertThat(min).isEqualTo(1);
+            assertThat(set).containsExactly(2, 3); // 1이 제거됨
+        }
+
+        @Test
+        void pollLast는_최댓값을_꺼내고_삭제() {
+            TreeSet<Integer> set = new TreeSet<>();
+            set.add(3);
+            set.add(1);
+            set.add(2);
+
+            Integer max = set.pollLast();
+
+            assertThat(max).isEqualTo(3);
+            assertThat(set).containsExactly(1, 2); // 3이 제거됨
+        }
+
+        @Test
+        void poll은_비어있으면_null_반환() {
+            TreeSet<Integer> set = new TreeSet<>();
+
+            assertThat(set.pollFirst()).isNull();
+            assertThat(set.pollLast()).isNull();
+        }
+    }
 }
